@@ -73,6 +73,36 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 	}
 
 	/**
+	 * Compares the game grid to the solution grid and returns
+	 * a boolean based on whether or not they match
+	 */
+	public boolean checkSolution()
+	{
+		for (int x = 0; x < solution.length; x++)
+		{
+			for (int y = 0; y < solution[x].length; y++)
+			{
+				// check that each box of the game grid matches each box of the
+				// solution grid
+				if (grid[x][y] != solution[x][y])
+				{ // return false if the boxes don't match
+					return false;
+				}
+			}
+		}
+		// return true if everything matches up to this point
+		return true;
+	}
+
+	/**
+	 * Updates the UI based on the player's progress
+	 */
+	public void updateUI()
+	{
+		// TODO: finish this method once GUI elements are all in place
+	}
+
+	/**
 	 * Debug/Testing: Prints the solution with stars
 	 * representing filled boxes and
 	 * spaces representing empty boxes
@@ -103,6 +133,11 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 
 		// testing that the image was read by printing the solution
 		game.printSolution();
+
+		// compare the grid to the solution grid.
+		// should be false since the grid is empty
+		System.out.println(
+				"Has the player completed the puzzle? " + game.checkSolution());
 	}
 
 }
