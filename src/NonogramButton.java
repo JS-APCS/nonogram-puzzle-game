@@ -1,3 +1,5 @@
+import java.awt.Color;
+
 import javax.swing.JButton;
 
 /**
@@ -9,7 +11,7 @@ import javax.swing.JButton;
  *         Retrieved from
  *         https://open.umn.edu/opentextbooks/textbooks/java-java-java-object-oriented-problem-solving
  * 
- *         Version/date: 4-12-24
+ *         Version/date: 4-22-24
  * 
  *         Responsibilities of class:
  *         Represents the boxes that are filled in on the game's grid
@@ -29,12 +31,14 @@ public class NonogramButton extends JButton	// NonogramButton is-a JButton
 	{
 		row = r;
 		column = c;
+		
+		setBackground(Color.white);
 	}
 
 	/**
 	 * Gets the button's row
 	 * 
-	 * @return
+	 * @return row
 	 */
 	public int getRow()
 	{
@@ -44,7 +48,7 @@ public class NonogramButton extends JButton	// NonogramButton is-a JButton
 	/**
 	 * Gets the button's column
 	 * 
-	 * @return
+	 * @return column
 	 */
 	public int getColumn()
 	{
