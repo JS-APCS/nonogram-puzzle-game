@@ -1,6 +1,8 @@
 import java.awt.Color;
+import java.awt.Font;
 
 import javax.swing.JLabel;
+
 /**
  * @author Jaiden Smith
  * 
@@ -9,15 +11,19 @@ import javax.swing.JLabel;
  *         Problem Solving.
  *         Retrieved from
  *         https://open.umn.edu/opentextbooks/textbooks/java-java-java-object-oriented-problem-solving
+ *         
+ *         Newline in JLabel
+ *         Retrieved from
+ *         https://stackoverflow.com/questions/1090098/newline-in-jlabel
  * 
- *         Version/date: 4-22-24
+ *         Version/date: 4-29-24
  * 
  *         Responsibilities of class:
- *         A RowMarker is a modified JLabel that reads from a 2D array of booleans
- *         (which represent's the Nonogram game board) and determines the list of
- *         numbers that should be listed next to each column and row. It also will
- *         change its background color to indicate that it's associated row is
- *         fulfilled by the player.
+ *         A RowMarker is a modified JLabel that reads from a 2D array of
+ *         booleans (which represent's the Nonogram game board) and
+ *         determines the list of numbers that should be listed next to 
+ *         each column and row. It also will change its background color
+ *         to indicate that it's associated row is fulfilled by the player.
  */
 public class RowMarker extends JLabel
 {
@@ -25,19 +31,37 @@ public class RowMarker extends JLabel
 	private int index; // RowMarker has-an index
 	private Color bgColor; // RowMarker has-a background color
 	private boolean isVertical; // RowMarker knows if it's horizontal or vertical
-	
-	public RowMarker(boolean[][] solution, int index, Color color, boolean vertical)
+
+	public RowMarker(boolean[][] solution, int index, boolean vertical)
 	{
-		bgColor = color;
+		// set the color to alternating colors based on the index
+		bgColor = ((index + 1) % 2 == 0) ? NonogramGame.markerColor1
+				: NonogramGame.markerColor2;
+
 		this.index = index;
 		isVertical = vertical;
-		
+
 		// setting up the list of numbers the marker should display
 		numList = getRowNumbers(solution);
-		
-		this.setText(numList); // set the label's text to the number list
+
+		// set the label's text to the number list
+		if (!vertical)
+		{ // if horizontal, use the normal list
+			this.setText(numList);
+		}
+		else
+		{ // otherwise, we'll replace the spaces with line breaks
+			// so that the numbers will line up vertically for column markers
+			this.setText(
+					"<html>" + getRowNumbers(solution).replaceAll(" ", "<br>")
+							+ "<html/>");
+		}
+
+		this.setFont(new Font("Arial", Font.BOLD, 16));
+		this.setOpaque(true);
+		this.setBackground(bgColor);
 	}
-	
+
 	/**
 	 * Returns a string of numbers representing how
 	 * many boxes should be filled in the marker's
@@ -49,26 +73,23 @@ public class RowMarker extends JLabel
 	public String getRowNumbers(boolean[][] solution)
 	{
 		String list = ""; // this is where we add the numbers
-		int boxCounter = 0;	// this will count the consecutive filled boxes
-		
+		int boxCounter = 0; // this will count the consecutive filled boxes
+
 		if (!isVertical)
-		{	// if not vertical (horizontal), traverse the row of the marker
+		{ // if not vertical (horizontal), traverse the row of the marker
 			for (int i = 0; i < solution[index].length; i++)
 			{
-				if (solution[index][i])
-				{ // if the space here is true (filled)
-					boxCounter++; // add 1 to the counter
-					
-					if (i == solution.length-1)
-					{ // if this is the last index, add the counter to the list
-						list += Integer.toString(boxCounter);
-					}
+				if (solution[index][i] == true)
+				{ // if the spot is filled, add to the counter
+					boxCounter++;
 				}
-				else if (!solution[index][i] && boxCounter > 0)
-				{ // if the space is false (empty) and boxCounter is over 0
-					// add a space to the list
-					list += Integer.toString(boxCounter) + " ";
-					boxCounter = 0;	// reset boxCounter
+				else
+				{ // if the spot is empty
+					if (boxCounter > 0)
+					{ // when the counter > 0, add it to the list and reset it
+						list += String.valueOf(boxCounter) + " ";
+						boxCounter = 0;
+					}
 				}
 			}
 		}
@@ -76,28 +97,27 @@ public class RowMarker extends JLabel
 		{ // if vertical, traverse the column of the marker
 			for (int i = 0; i < solution.length; i++)
 			{
-				if (solution[i][index])
-				{ // if the space is true (filled)
-					boxCounter++; // add 1 to the counter
-					
-					if (i == solution.length-1)
-					{ // if this is the last index, add the counter to the list
-						list += Integer.toString(boxCounter);
-					}
+				if (solution[i][index] == true)
+				{// if the spot is filled, add to the counter
+					boxCounter++;
 				}
-				else if (!solution[index][i] && boxCounter > 0)
-				{ // if the space is false (empty) and boxCounter is over 0
-					// add a space to the list
-					list += Integer.toString(boxCounter) + " ";
-					boxCounter = 0; // reset the counter
+				else
+				{// if the spot is empty
+					if (boxCounter > 0)
+					{// when the counter > 0, add it to the list and reset it
+						list += String.valueOf(boxCounter) + " ";
+						boxCounter = 0;
+					}
 				}
 			}
 		}
-		
+		// by the end, if counter is still over 0, add it to the list
+		if (boxCounter > 0) list += String.valueOf(boxCounter);
+
 		// remove any extra leading/trailing spaces and return
 		return list.trim();
 	}
-	
+
 	/**
 	 * Return the marker's row/column index
 	 * 
@@ -107,17 +127,17 @@ public class RowMarker extends JLabel
 	{
 		return index;
 	}
-	
+
 	/**
-	 * Set the background color
+	 * Get the background color
 	 * 
-	 * @param c
+	 * @return bgColor
 	 */
-	public void setColor(Color c)
+	public Color getColor()
 	{
-		bgColor = c;
+		return bgColor;
 	}
-	
+
 	/**
 	 * Returns whether or not the marker's corresponding
 	 * row/column in the puzzle grid (filled in by the player)
@@ -129,6 +149,6 @@ public class RowMarker extends JLabel
 	public boolean checkRow(boolean[][] grid)
 	{
 		// if the row numbers match, return true
-		return getRowNumbers(grid) == numList;
+		return getRowNumbers(grid).equals(numList);
 	}
 }

@@ -2,6 +2,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 
 /**
  * @author Jaiden Smith
@@ -11,23 +12,28 @@ import javax.swing.ImageIcon;
  *         Problem Solving.
  *         Retrieved from
  *         https://open.umn.edu/opentextbooks/textbooks/java-java-java-object-oriented-problem-solving
+ *         
+ *         Add Image to JOptionPane
+ *         Retrieved from
+ *         https://stackoverflow.com/questions/13963392/add-image-to-joptionpane
  * 
- *         Version/date: 4-22-24
+ *         Version/date: 4-29-24
  * 
  *         Responsibilities of class:
  *         A modified ActionListener that listens to the NonogramButton class
  *         and updates the NonogramGame's board of buttons to reflect whether
- *         or not they are filled in or crossed out. It also checks the 
+ *         or not they are filled in or crossed out. It also checks the
  *         player's progress after every move.
  */
 public class NonogramButtonListener implements ActionListener
 {
 	private NonogramGame game; // NonogramButtonListener has-a NonogramGame
 	private NonogramButton button; // NonogramButtonListener has-a NonogramButton
+	private NonogramLevel level; // NonogramButtonListener has-a NonogramLevel
 
 	// NonogramButtonListener has image icons for setting the button's icon
-	private ImageIcon fillIcon = new ImageIcon("images/fill-in.gif");
-	private ImageIcon crossIcon = new ImageIcon("images/cross-out.gif");
+	private static ImageIcon fillIcon = new ImageIcon("images/filled.gif");
+	private static ImageIcon crossIcon = new ImageIcon("images/cross-out.gif");
 
 	/**
 	 * Constructor
@@ -39,6 +45,7 @@ public class NonogramButtonListener implements ActionListener
 	{
 		this.game = game;
 		this.button = button;
+		level = game.getLevel();
 	}
 
 	@Override
@@ -68,6 +75,12 @@ public class NonogramButtonListener implements ActionListener
 			if (game.checkSolution())
 			{
 				System.out.println("Puzzle Complete!");
+				// tell the player the puzzle is complete
+				// and show the complete picture
+				JOptionPane.showMessageDialog(null,
+						"It's a " + level.getName() + "!", "Puzzle Complete!",
+						JOptionPane.INFORMATION_MESSAGE, level.getSolvedIcon());
+				game.restart(); // start a new game
 			}
 		}
 		else
@@ -83,7 +96,7 @@ public class NonogramButtonListener implements ActionListener
 				button.setIcon(null);
 			}
 		}
-
+		game.updateUI(); // update the UI
 	}
 
 }

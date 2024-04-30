@@ -8,14 +8,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 /**
  * @author Jaiden Smith
@@ -26,42 +31,39 @@ import javax.swing.JPanel;
  *         Retrieved from
  *         https://open.umn.edu/opentextbooks/textbooks/java-java-java-object-oriented-problem-solving
  * 
- *         Understanding BufferedImage.getRGB output values
- *         Retrieved from
- *         https://stackoverflow.com/questions/25761438/understanding-bufferedimage-getrgb-output-values
- *         
  *         Java GridBagLayout
  *         Retrieved from
  *         https://www.javatpoint.com/java-gridbaglayout
  * 
- *         Version/date: 4-22-24
+ *         Version/date: 4-29-24
  * 
  *         Responsibilities of class:
  *         Holds the main functions of the game and displays the game's GUI
  *         elements;
- *         establishes the game board by reading an image and creating a grid of
- *         buttons based on the image dimensions.
  */
 public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 {
-	private int width, height; // NonogramGame has-a width and height
+	
 	private boolean fillMode = true; // NonogramGame has-a fill mode
 	private boolean[][] grid; // NonogramGame has-a grid
-	private boolean[][] solution; // NonogramGame has-a solution
-	private BufferedImage image; // NonogramGame has-an image
+	private NonogramLevel level; // NonogramGame has-a level
 
 	// NonogramGame has-a list of row markers and column markers
 	private ArrayList<RowMarker> rowMarkerList;
-	private ArrayList<RowMarker> columnMarkerList;
 
 	private int FRAME_SIZE = 700; // NonogramGame knows its frame size
+	
+	// These are the colors of the row markers
+	public static Color markerColor1 = new Color(204, 221, 252);
+	public static Color markerColor2 = new Color(153, 172, 207);
+	public static Color solvedColor = new Color(98, 240, 105);
 
 	/**
 	 * Constructor
 	 * 
 	 * @param fileName
 	 */
-	public NonogramGame(String fileName)
+	public NonogramGame(String name)
 	{
 		this.setTitle("Nonogram"); // set the frame's title
 		this.setLayout(new GridBagLayout());
@@ -69,38 +71,18 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 		// this constraint will allow us to position GUI elements
 		GridBagConstraints GBC = new GridBagConstraints();
 
-		try
-		{ // try to read the image with the file name
-			image = ImageIO.read(new File("images/" + fileName));
-		}
-		catch (IOException e)
-		{ // if the image fails to be read
-			e.printStackTrace();
-			System.out.println("Couldn't read image!");
-		}
-
-		// set image width and height
-		width = image.getWidth();
-		height = image.getHeight();
+		level = new NonogramLevel(name); // setup the level with the name
 
 		// create the arrays with the image dimensions
-		grid = new boolean[width][height];
-		solution = new boolean[width][height];
-
-		// Setting up the solution grid based on the image
-		for (int x = 0; x < width; x++)
-		{
-			for (int y = 0; y < height; y++)
-			{
-				// set the solution grid's corresponding coordinate
-				// to a boolean based on whether this pixel is black
-				solution[x][y] = (image.getRGB(y, x) == Color.black.getRGB());
-			}
-		}
+		grid = new boolean[level.getWidth()][level.getHeight()];
 
 		// JPanels for organization
 		// buttonPanel holds the buttons in a grid
-		JPanel buttonPanel = new JPanel(new GridLayout(width, height));
+		JPanel buttonPanel = new JPanel(new GridLayout(level.getWidth(), level.getHeight()));
+		// rowMarkerPanel holds the row markers on the side of the grid
+		JPanel rowMarkerPanel = new JPanel(new GridBagLayout());
+		// columnMarkerPanel holds the row markers on the top of the grid
+		JPanel columnMarkerPanel = new JPanel(new GridBagLayout());
 
 		// buttonPanel setup
 		buttonPanel.setPreferredSize(
@@ -141,42 +123,66 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 		});
 
 		// Setting up the row markers
-		rowMarkerList = new ArrayList<RowMarker>(height); // horizontal
+		rowMarkerList = new ArrayList<RowMarker>();
+		
+		// constraint configurations for the row markers
+		GBC.gridx = 0;
+		GBC.weightx = 1.0;
+		GBC.weighty = 1.0;
+		GBC.fill = GridBagConstraints.BOTH;
 
-		for (int i = 0; i < height; i++)
-		{
-			RowMarker rm = new RowMarker(solution, i, Color.white, false);
+		for (int i = 0; i < level.getHeight(); i++)
+		{// create and add a marker to the list of markers and to the panel
+			RowMarker rm = new RowMarker(level.getSolution(), i, false);
+			rm.setHorizontalAlignment(SwingConstants.RIGHT);
 			rowMarkerList.add(rm);
+			
+			GBC.gridy = i;
+			rowMarkerPanel.add(rm, GBC);
 		}
 
-		columnMarkerList = new ArrayList<RowMarker>(width); // vertical
+		// Adding the column markers
 
-		for (int i = 0; i < height; i++)
-		{
-			RowMarker rm = new RowMarker(solution, i, Color.white, true);
-			columnMarkerList.add(rm);
+		GBC.gridy = 0;
+		
+		for (int i = 0; i < level.getWidth(); i++)
+		{// create and add a marker to the list of markers and to the panel
+			RowMarker rm = new RowMarker(level.getSolution(), i, true);
+			rm.setHorizontalAlignment(SwingConstants.CENTER);
+			rm.setVerticalAlignment(SwingConstants.BOTTOM);
+			rowMarkerList.add(rm);
+			
+			GBC.gridx = i;
+			columnMarkerPanel.add(rm, GBC);
 		}
-
-		// Testing: test that the RowMarker class knows the number(s)
-		// of filled boxes in its row/column
-		for (int i = 0; i < width; i++)
-		{
-			System.out.println(String.format("row %d: %s |column %d: %s", i,
-					rowMarkerList.get(i).getText(), i, columnMarkerList.get(i).getText()));
-		}
+		
 
 		// Adding the panels
 		// edit the GBC as we go
 		// the toggle button will be at 0,0
+		GBC.weightx = 0;
+		GBC.weighty = 0;
 		GBC.gridx = 0;
 		GBC.gridy = 0;
 		this.add(toggleButton, GBC);
+		
+		// the row marker panel will be at 0,1
+		GBC.gridx = 0;
+		GBC.gridy = 1;
+		GBC.fill = GridBagConstraints.BOTH;
+		this.add(rowMarkerPanel, GBC);
+		
+		// the column marker panel will be at 1,0
+		GBC.gridx = 1;
+		GBC.gridy = 0;
+		this.add(columnMarkerPanel, GBC);
 
 		// the button panel will be at 1,1
 		GBC.gridx = 1;
 		GBC.gridy = 1;
+		GBC.fill = GridBagConstraints.NONE;
 		this.add(buttonPanel, GBC);
-
+		
 		this.setMinimumSize(new Dimension(FRAME_SIZE, FRAME_SIZE));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		pack();
@@ -189,6 +195,15 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 	public boolean getFillMode()
 	{
 		return fillMode;
+	}
+	
+	/**
+	 * Get the current level
+	 * @return level
+	 */
+	public NonogramLevel getLevel()
+	{
+		return level;
 	}
 
 	/**
@@ -210,13 +225,13 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 	 */
 	public boolean checkSolution()
 	{
-		for (int x = 0; x < solution.length; x++)
+		for (int x = 0; x < level.getSolution().length; x++)
 		{
-			for (int y = 0; y < solution[x].length; y++)
+			for (int y = 0; y < level.getSolution()[x].length; y++)
 			{
 				// check that each box of the game grid matches each box of the
 				// solution grid
-				if (grid[x][y] != solution[x][y])
+				if (grid[x][y] != level.getSolution()[x][y])
 				{ // return false if the boxes don't match
 					return false;
 				}
@@ -231,7 +246,30 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 	 */
 	public void updateUI()
 	{
-		// TODO: finish this method once GUI elements are all in place
+		for (RowMarker marker : rowMarkerList)
+		{ // for every marker, check if the row matches the solution
+			if (marker.checkRow(grid))
+			{// if so, change the color to green
+				marker.setBackground(solvedColor);
+			}
+			else
+			{// otherwise, reset the color
+				marker.setBackground(marker.getColor());
+			}
+		}
+	}
+	
+	/**
+	 * Starts a new game and disposes of the current one
+	 * (This method will change once text IO is implemented)
+	 */
+	public void restart()
+	{
+		String[] levels = {"smile", "heart", "spiral", "donut"};
+		
+		// create a game with a random puzzle
+		NonogramGame game = new NonogramGame(levels[new Random().nextInt(levels.length)]);
+		this.dispose();
 	}
 
 	/**
@@ -241,11 +279,11 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 	 */
 	public void printSolution()
 	{
-		for (int x = 0; x < width; x++)
+		for (int x = 0; x < level.getWidth(); x++)
 		{
-			for (int y = 0; y < height; y++)
+			for (int y = 0; y < level.getHeight(); y++)
 			{
-				if (solution[x][y] == true)
+				if (level.getSolution()[x][y] == true)
 				{ // if true, print a star
 					System.out.print("*");
 				}
@@ -261,15 +299,18 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 
 	public static void main(String[] args)
 	{
-		NonogramGame game = new NonogramGame("smile.png");
+		/* For testing purposes: this will be used to start
+		 * a random puzzle on each run. I will eventually
+		 * implement text file IO for reading and saving
+		 * level data.
+		 */
+		String[] levels = {"smile", "heart", "spiral", "donut"};
+		
+		// create a game with a random puzzle
+		NonogramGame game = new NonogramGame(levels[new Random().nextInt(levels.length)]);
 
 		// testing that the image was read by printing the solution
-		// game.printSolution();
-
-		// compare the grid to the solution grid.
-		// should be false since the grid is empty
-		// System.out.println(
-		// "Has the player completed the puzzle? " + game.checkSolution());
+		//game.printSolution();
 
 	}
 
