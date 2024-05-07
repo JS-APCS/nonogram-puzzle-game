@@ -417,15 +417,6 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 	}
 
 	/**
-	 * Compares the game grid to the solution grid and returns
-	 * a boolean based on whether or not they match
-	 */
-	public boolean checkSolution()
-	{
-		return getProgress() == 100;
-	}
-
-	/**
 	 * Updates the UI based on the player's progress
 	 */
 	public void updateUI()

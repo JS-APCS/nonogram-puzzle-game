@@ -71,8 +71,8 @@ public class NonogramButtonListener implements ActionListener
 					button.getIsFilled());
 
 			// after any move has been made with the fill mode set to true
-			// check if the player's progress matches the solution
-			if (game.checkSolution())
+			// check if the player's progress is at 100
+			if (game.getProgress() == 100)
 			{
 				System.out.println("Puzzle Complete!");
 				// tell the player the puzzle is complete
