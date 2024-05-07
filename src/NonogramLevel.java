@@ -28,14 +28,19 @@ import javax.swing.ImageIcon;
 public class NonogramLevel
 {
 	private String name; // NonogramLevel has-a name
+	private int levelID; // NonogramLevel has-a level ID
 	private BufferedImage image; // NonogramLevel has-an image
 	private ImageIcon solvedImage; // NonogramLevel has-a solved image
 	private int width, height; // NonogramLevel has-a width and height
 	private boolean[][] solution; // NonogramLevel has-a solution array
 	
-	public NonogramLevel(String name)
+	public NonogramLevel(String data, int id)
 	{
-		this.name = name;
+		// constructor receives a level data string and an ID
+		// format of the string is: name - completion
+		
+		name = data.split(" - ")[0];
+		levelID = id;
 		
 		try
 		{ // try to read the image based on the level's name
@@ -109,5 +114,14 @@ public class NonogramLevel
 	public String getName()
 	{
 		return name;
+	}
+	
+	/**
+	 * Get the ID of the level
+	 * @return levelID
+	 */
+	public int getID()
+	{
+		return levelID;
 	}
 }

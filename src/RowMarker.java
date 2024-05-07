@@ -47,14 +47,14 @@ public class RowMarker extends JLabel
 		// set the label's text to the number list
 		if (!vertical)
 		{ // if horizontal, use the normal list
-			this.setText(numList);
+			this.setText(numList+" ");
 		}
 		else
 		{ // otherwise, we'll replace the spaces with line breaks
 			// so that the numbers will line up vertically for column markers
 			this.setText(
 					"<html>" + getRowNumbers(solution).replaceAll(" ", "<br>")
-							+ "<html/>");
+							+ "</html>");
 		}
 
 		this.setFont(new Font("Arial", Font.BOLD, 16));

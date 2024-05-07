@@ -1,0 +1,11 @@
+<html>Fill in the grid in <i>Fill</i> mode according to the numbers
+listed next to each row and column. For rows with
+multiple numbers, there must be at least one empty
+space between each number of filled boxes. You  can
+use <i>Cross</i> mode to cross out the boxes you think should
+be left empty. If you would like more assistance,
+click on the "i."<html/>
+
+It looks like you've completed all of the available
+levels! Would you like to reset all level data and
+play them again?

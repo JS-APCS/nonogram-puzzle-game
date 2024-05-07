@@ -77,9 +77,10 @@ public class NonogramButtonListener implements ActionListener
 				System.out.println("Puzzle Complete!");
 				// tell the player the puzzle is complete
 				// and show the complete picture
-				JOptionPane.showMessageDialog(null,
+				JOptionPane.showMessageDialog(game,
 						"It's a " + level.getName() + "!", "Puzzle Complete!",
 						JOptionPane.INFORMATION_MESSAGE, level.getSolvedIcon());
+				game.editLevelData("complete");
 				game.restart(); // start a new game
 			}
 		}
