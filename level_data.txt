@@ -1,7 +1,7 @@
-spiral - incomplete
-heart - incomplete
-donut - incomplete
-note - incomplete
-smile - incomplete
-yo-yo - incomplete
-mushroom - incomplete
+spiral - complete - 00:49
+heart - incomplete - --:--
+donut - incomplete - --:--
+note - incomplete - --:--
+smile - incomplete - --:--
+yo-yo - incomplete - --:--
+mushroom - incomplete - --:--

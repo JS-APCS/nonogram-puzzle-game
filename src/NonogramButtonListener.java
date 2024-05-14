@@ -2,6 +2,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 /**
@@ -12,12 +13,12 @@ import javax.swing.JOptionPane;
  *         Problem Solving.
  *         Retrieved from
  *         https://open.umn.edu/opentextbooks/textbooks/java-java-java-object-oriented-problem-solving
- *         
+ * 
  *         Add Image to JOptionPane
  *         Retrieved from
  *         https://stackoverflow.com/questions/13963392/add-image-to-joptionpane
  * 
- *         Version/date: 4-29-24
+ *         Version/date: 5-13-24
  * 
  *         Responsibilities of class:
  *         A modified ActionListener that listens to the NonogramButton class
@@ -28,7 +29,8 @@ import javax.swing.JOptionPane;
 public class NonogramButtonListener implements ActionListener
 {
 	private NonogramGame game; // NonogramButtonListener has-a NonogramGame
-	private NonogramButton button; // NonogramButtonListener has-a NonogramButton
+	private NonogramButton button; // NonogramButtonListener has-a
+									// NonogramButton
 	private NonogramLevel level; // NonogramButtonListener has-a NonogramLevel
 
 	// NonogramButtonListener has image icons for setting the button's icon
@@ -51,6 +53,12 @@ public class NonogramButtonListener implements ActionListener
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
+		// the level timer will start once any grid buttons are clicked
+		if (!level.getLevelTimer().isRunning())
+		{ // if it's not running, then start the timer
+			level.getLevelTimer().start();
+		}
+
 		// on a button click, check this structure
 		if (game.getFillMode())
 		{ // if the fill mode is true (fill)
@@ -74,14 +82,28 @@ public class NonogramButtonListener implements ActionListener
 			// check if the player's progress is at 100
 			if (game.getProgress() == 100)
 			{
+				level.getLevelTimer().stop(); // stop the level timer
 				System.out.println("Puzzle Complete!");
-				// tell the player the puzzle is complete
-				// and show the complete picture
-				JOptionPane.showMessageDialog(game,
-						"It's a " + level.getName() + "!", "Puzzle Complete!",
-						JOptionPane.INFORMATION_MESSAGE, level.getSolvedIcon());
-				game.editLevelData("complete");
-				game.restart(); // start a new game
+
+				game.editLevelData("complete"); // save the level data
+
+				// show the complete image, the player's time, and prompt to continue
+				int response = JOptionPane.showOptionDialog(game,
+						String.format(
+								"It's a %s!\r\n" + "Time: %s\r\n" + "Continue?",
+								level.getName(), level.getLevelTime()),
+						"Puzzle Complete!", JOptionPane.YES_NO_OPTION,
+						JOptionPane.QUESTION_MESSAGE, level.getSolvedIcon(),
+						new Object[] { "Yes", "No" }, JOptionPane.YES_OPTION);
+
+				if (response == JOptionPane.YES_OPTION)
+				{ // if yes, start a new game
+					game.restart(); // start a new game
+				}
+				else
+				{ // otherwise, we can close the program
+					System.exit(0);
+				}
 			}
 		}
 		else

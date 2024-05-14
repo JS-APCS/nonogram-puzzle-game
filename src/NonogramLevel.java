@@ -1,10 +1,16 @@
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+import javax.swing.Timer;
 /**
  * @author Jaiden Smith
  * 
@@ -18,7 +24,7 @@ import javax.swing.ImageIcon;
  *         Retrieved from
  *         https://stackoverflow.com/questions/25761438/understanding-bufferedimage-getrgb-output-values
  * 
- *         Version/date: 4-29-24
+ *         Version/date: 5-13-24
  * 
  *         Responsibilities of class:
  *         Represents a level of the game based on the given image name;
@@ -34,6 +40,10 @@ public class NonogramLevel
 	private int width, height; // NonogramLevel has-a width and height
 	private boolean[][] solution; // NonogramLevel has-a solution array
 	
+	private int timeCounter = 0;
+	private Timer levelTimer;
+	private JLabel timerLabel;
+	
 	public NonogramLevel(String data, int id)
 	{
 		// constructor receives a level data string and an ID
@@ -41,6 +51,24 @@ public class NonogramLevel
 		
 		name = data.split(" - ")[0];
 		levelID = id;
+		
+		// this label will display the level's elapsed time
+		timerLabel = new JLabel("--:--");
+		timerLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		timerLabel.setFont(new Font("Courier New", Font.ITALIC, 30));
+		timerLabel.setOpaque(true);
+		timerLabel.setBackground(NonogramGame.markerColor1);
+		
+		// setting up the level timer with an action listener
+		levelTimer = new Timer(1000, new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				timeCounter++;
+				timerLabel.setText(getLevelTime());
+			}
+		});
 		
 		try
 		{ // try to read the image based on the level's name
@@ -123,5 +151,32 @@ public class NonogramLevel
 	public int getID()
 	{
 		return levelID;
+	}
+	
+	/**
+	 * Get the level's timer
+	 */
+	public Timer getLevelTimer()
+	{
+		return levelTimer;
+	}
+	
+	/**
+	 * Get the timer's label
+	 */
+	public JLabel getTimerLabel()
+	{
+		return timerLabel;
+	}
+	
+	/**
+	 * Get the elapsed time of the level
+	 * @return the current level's time
+	 */
+	public String getLevelTime()
+	{
+		String minutes = timeCounter / 60 > 9 ? "" + timeCounter / 60 : "0" + timeCounter / 60;
+		String seconds = timeCounter % 60 > 9 ? "" + timeCounter % 60 : "0" + timeCounter % 60;
+		return minutes + ":" + seconds;
 	}
 }

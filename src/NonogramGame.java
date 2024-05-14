@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -51,7 +52,7 @@ import javax.swing.UIManager;
  *         Retrieved from
  *         https://www.javatpoint.com/java-jprogressbar
  * 
- *         Version/date: 5-6-24
+ *         Version/date: 5-13-24
  * 
  *         Responsibilities of class:
  *         Holds the main functions of the game and displays the game's GUI
@@ -103,7 +104,7 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 		this.setLayout(new GridBagLayout());
 
 		// this constraint will allow us to position GUI elements
-		GridBagConstraints GBC = new GridBagConstraints();
+		GridBagConstraints gbc = new GridBagConstraints();
 
 		// try to open and read from the level data file
 		Scanner reader = null;
@@ -125,10 +126,10 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 			if (reader != null) reader.close();
 		}
 
-		//after establishing the array of level data
-		//we can create a new level
+		// after establishing the array of level data
+		// we can create a new level
 		level = createNewLevel();
-		
+
 		// What if all the levels are complete and the level
 		// object does not get instantiated?
 		if (level == null)
@@ -155,12 +156,16 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 		// buttonPanel holds the buttons in a grid
 		JPanel buttonPanel = new JPanel(
 				new GridLayout(level.getWidth(), level.getHeight()));
+
 		// rowMarkerPanel holds the row markers on the side of the grid
 		JPanel rowMarkerPanel = new JPanel(new GridBagLayout());
+
 		// columnMarkerPanel holds the row markers on the top of the grid
 		JPanel columnMarkerPanel = new JPanel(new GridBagLayout());
+
 		// infoPanel holds the information buttons
 		JPanel infoPanel = new JPanel(new GridLayout(2, 1));
+
 		// progressPane holds the progress bar and image
 		JLayeredPane progressPane = new JLayeredPane();
 
@@ -185,7 +190,7 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 		toggleButton.setPreferredSize(new Dimension(80, 80));
 
 		toggleButton.addActionListener(new ActionListener()
-		{
+		{ // this button needs an actionListener
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
@@ -206,10 +211,10 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 		rowMarkerList = new ArrayList<RowMarker>();
 
 		// constraint configurations for the row markers
-		GBC.gridx = 0;
-		GBC.weightx = 1.0;
-		GBC.weighty = 1.0;
-		GBC.fill = GridBagConstraints.BOTH;
+		gbc.gridx = 0;
+		gbc.weightx = 1.0;
+		gbc.weighty = 1.0;
+		gbc.fill = GridBagConstraints.BOTH;
 
 		for (int i = 0; i < level.getHeight(); i++)
 		{// create and add a marker to the list of markers and to the panel
@@ -217,12 +222,12 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 			rm.setHorizontalAlignment(SwingConstants.RIGHT);
 			rowMarkerList.add(rm);
 
-			GBC.gridy = i;
-			rowMarkerPanel.add(rm, GBC);
+			gbc.gridy = i;
+			rowMarkerPanel.add(rm, gbc);
 		}
 
 		// Adding the column markers
-		GBC.gridy = 0;
+		gbc.gridy = 0;
 
 		for (int i = 0; i < level.getWidth(); i++)
 		{// create and add a marker to the list of markers and to the panel
@@ -231,21 +236,21 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 			rm.setVerticalAlignment(SwingConstants.BOTTOM);
 			rowMarkerList.add(rm);
 
-			GBC.gridx = i;
-			columnMarkerPanel.add(rm, GBC);
+			gbc.gridx = i;
+			columnMarkerPanel.add(rm, gbc);
 		}
 
 		// progress bar setup
 		progressBar = new JProgressBar(JProgressBar.VERTICAL, 0, 100);
 		progressBar.setBorderPainted(false); // hide border
 		progressBar.setValue(getProgress()); // set progress
-		progressBar.setBounds(24, 12, 16, 320);
+		progressBar.setBounds(24, 12, 16, 320); // set bounds
 		progressBar.setForeground(new Color(250, 32, 32)); // make it red
 
 		progressBar.setString("");
 		progressBar.setStringPainted(true);
 		progressBar.setVisible(false);
-		
+
 		// this will display an image over the progress bar
 		JLabel thermometer = new JLabel(
 				new ImageIcon("images/thermometer.png"));
@@ -262,7 +267,7 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 		helpButton.setIcon(UIManager.getIcon("OptionPane.questionIcon"));
 
 		helpButton.addActionListener(new ActionListener()
-		{
+		{ // this button needs an actionListener
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{// display the "How to play" message
@@ -279,7 +284,7 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 		infoButton.setIcon(UIManager.getIcon("OptionPane.informationIcon"));
 
 		infoButton.addActionListener(new ActionListener()
-		{
+		{ // this button needs an actionListener
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{// toggle the visibility of the progress bar and image
@@ -290,43 +295,52 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 		infoPanel.add(infoButton); // add the button to the panel
 
 		// Adding the panels
-		// edit the GBC as we go
+		// edit the gbc as we go
 		// the toggle button will be at 0,0
-		GBC.weightx = 0;
-		GBC.weighty = 0;
-		GBC.gridx = 0;
-		GBC.gridy = 0;
-		GBC.insets = new Insets(10, 10, 10, 10);
-		this.add(toggleButton, GBC);
+		gbc.weightx = 0;
+		gbc.weighty = 0;
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.insets = new Insets(10, 10, 10, 10);
+		this.add(toggleButton, gbc);
 
 		// the row marker panel will be at 0,1
-		GBC.gridx = 0;
-		GBC.gridy = 1;
-		GBC.fill = GridBagConstraints.BOTH;
-		GBC.insets = new Insets(2, 2, 2, 2);
-		this.add(rowMarkerPanel, GBC);
+		gbc.gridx = 0;
+		gbc.gridy = 1;
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.insets = new Insets(2, 2, 2, 2);
+		this.add(rowMarkerPanel, gbc);
 
 		// the column marker panel will be at 1,0
-		GBC.gridx = 1;
-		GBC.gridy = 0;
-		this.add(columnMarkerPanel, GBC);
+		gbc.gridx = 1;
+		gbc.gridy = 0;
+		this.add(columnMarkerPanel, gbc);
 
 		// the button panel will be at 1,1
-		GBC.gridx = 1;
-		GBC.gridy = 1;
-		GBC.fill = GridBagConstraints.NONE;
-		this.add(buttonPanel, GBC);
+		gbc.gridx = 1;
+		gbc.gridy = 1;
+		gbc.fill = GridBagConstraints.NONE;
+		this.add(buttonPanel, gbc);
 
 		// the help button will be at 2,0
-		GBC.gridx = 2;
-		GBC.gridy = 0;
+		gbc.gridx = 2;
+		gbc.gridy = 0;
 		this.add(infoPanel);
 
 		// the progress pane will be at 2,1
-		GBC.gridx = 2;
-		GBC.gridy = 1;
-		// GBC.fill = GridBagConstraints.VERTICAL;
-		this.add(progressPane, GBC);
+		gbc.gridx = 2;
+		gbc.gridy = 1;
+		this.add(progressPane, gbc);
+
+		// the timer label will be at 3, 0
+		gbc.gridx = 3;
+		gbc.gridy = 0;
+		gbc.insets = new Insets(0, 0, 0, 10);
+		gbc.ipadx = 10;
+		gbc.ipady = 10;
+
+		// adding the level's timer label
+		this.add(level.getTimerLabel(), gbc);
 
 		this.setMinimumSize(new Dimension(FRAME_SIZE, FRAME_SIZE));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -338,6 +352,7 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 	 * Creates a NonogramLevel that will either be
 	 * a level or null based on whether an incomplete
 	 * level is available in the level data array
+	 * 
 	 * @return NonogramLevel or null
 	 */
 	public NonogramLevel createNewLevel()
@@ -351,7 +366,7 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 			{
 				// setup the level with the name
 				newLevel = new NonogramLevel(levelData.get(i), i);
-				break;
+				break; // a level was found, so we can stop here
 			}
 		}
 		// this should return a new level or null if
@@ -361,6 +376,8 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 
 	/**
 	 * Get the current fill mode
+	 * 
+	 * @return fillMode
 	 */
 	public boolean getFillMode()
 	{
@@ -378,27 +395,15 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 	}
 
 	/**
-	 * Updates the puzzle grid at the given row and column
-	 * with the provided boolean value
-	 * 
-	 * @param row
-	 * @param column
-	 * @param filled
-	 */
-	public void updateGridAtIndex(int row, int column, boolean filled)
-	{
-		grid[row][column] = filled;
-	}
-
-	/**
 	 * Returns the progress of the level's
 	 * completion as a percent
 	 * 
-	 * @return
+	 * @return the current level's completion as a percent
 	 */
 	public int getProgress()
 	{
 		int progress = 0; // this will track progress
+		// total number of spaces in the grid
 		int total = level.getWidth() * level.getHeight();
 
 		for (int x = 0; x < level.getSolution().length; x++)
@@ -414,6 +419,19 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 		}
 		// return a percentage of the progress / total
 		return (progress * 100) / total;
+	}
+
+	/**
+	 * Updates the puzzle grid at the given row and column
+	 * with the provided boolean value
+	 * 
+	 * @param row
+	 * @param column
+	 * @param filled
+	 */
+	public void updateGridAtIndex(int row, int column, boolean filled)
+	{
+		grid[row][column] = filled;
 	}
 
 	/**
@@ -437,12 +455,13 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 		{// if the progress should increase, turn the bar red
 			progressBar.setForeground(new Color(250, 32, 32));
 			progressBar.setString("Getting Warmer...");
-		} // otherwise, turn it blue
+		}
 		else
-		{
+		{ // otherwise, turn it blue
 			progressBar.setForeground(new Color(33, 87, 235));
 			progressBar.setString("Getting Colder...");
 		}
+		// update progress bar value
 		progressBar.setValue(getProgress());
 	}
 
@@ -461,7 +480,7 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 					new FileWriter("level_data.txt", false));
 
 			for (String data : levelData)
-			{
+			{ // write each line of data to the file
 				writer.write(data);
 				writer.newLine();
 			}
@@ -493,8 +512,8 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 	public void editLevelData(String completionStatus)
 	{
 		// edit the data of the current level
-		levelData.set(level.getID(),
-				level.getName() + " - " + completionStatus);
+		levelData.set(level.getID(), level.getName() + " - " + completionStatus
+				+ " - " + level.getLevelTime());
 		// save the data to the file
 		saveDataToFile();
 	}
@@ -504,15 +523,13 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 		// to reset level data, set all
 		// completion statuses to incomplete
 		// and write to the file
-
 		for (int i = 0; i < levelData.size(); i++)
 		{
 			// get the current string and alter it
 			String data = levelData.get(i).replace("complete", "incomplete");
-			levelData.set(i, data); // then set the current index to the altered
-									// data
+			data = data.replaceAll("\\d", "-"); // reset level times
+			levelData.set(i, data); // set the current index to the altered data
 		}
-
 		// after altering the data, save it to the file
 		saveDataToFile();
 	}
@@ -527,39 +544,9 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 		this.dispose();
 	}
 
-	/**
-	 * Debug/Testing: Prints the solution with stars
-	 * representing filled boxes and
-	 * spaces representing empty boxes
-	 */
-	public void printSolution()
-	{
-		for (int x = 0; x < level.getWidth(); x++)
-		{
-			for (int y = 0; y < level.getHeight(); y++)
-			{
-				if (level.getSolution()[x][y] == true)
-				{ // if true, print a star
-					System.out.print("*");
-				}
-				else
-				{ // else print a space
-					System.out.print(" ");
-				}
-			}
-			// end each row with a newline
-			System.out.print("\n");
-		}
-	}
-
 	public static void main(String[] args)
 	{
-
 		NonogramGame game = new NonogramGame();
-
-		// testing that the image was read by printing the solution
-		// game.printSolution();
-
 	}
 
 }
