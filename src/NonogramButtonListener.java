@@ -54,9 +54,9 @@ public class NonogramButtonListener implements ActionListener
 	public void actionPerformed(ActionEvent e)
 	{
 		// the level timer will start once any grid buttons are clicked
-		if (!level.getLevelTimer().isRunning())
+		if (!game.getTimer().isRunning())
 		{ // if it's not running, then start the timer
-			level.getLevelTimer().start();
+			game.getTimer().start();
 		}
 
 		// on a button click, check this structure
@@ -82,7 +82,7 @@ public class NonogramButtonListener implements ActionListener
 			// check if the player's progress is at 100
 			if (game.getProgress() == 100)
 			{
-				level.getLevelTimer().stop(); // stop the level timer
+				game.getTimer().stop(); // stop the level timer
 				System.out.println("Puzzle Complete!");
 
 				game.editLevelData("complete"); // save the level data
@@ -91,7 +91,7 @@ public class NonogramButtonListener implements ActionListener
 				int response = JOptionPane.showOptionDialog(game,
 						String.format(
 								"It's a %s!\r\n" + "Time: %s\r\n" + "Continue?",
-								level.getName(), level.getLevelTime()),
+								level.getName(), game.getTime()),
 						"Puzzle Complete!", JOptionPane.YES_NO_OPTION,
 						JOptionPane.QUESTION_MESSAGE, level.getSolvedIcon(),
 						new Object[] { "Yes", "No" }, JOptionPane.YES_OPTION);

@@ -25,6 +25,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
+import javax.swing.Timer;
 import javax.swing.UIManager;
 
 /**
@@ -65,6 +66,8 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 	private boolean[][] grid; // NonogramGame has-a grid
 	private NonogramLevel level; // NonogramGame has-a level
 	private JProgressBar progressBar; // NonogramGame has-a progress bar
+	private Timer gameTimer; // NonogramGame has-a timer
+	private int timeCounter = 0; // NonogramGame keeps track of the time
 
 	// NonogramGame has-a list of row markers and column markers
 	private ArrayList<RowMarker> rowMarkerList;
@@ -338,9 +341,27 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 		gbc.insets = new Insets(0, 0, 0, 10);
 		gbc.ipadx = 10;
 		gbc.ipady = 10;
+		
+		// this label will display the level's elapsed time
+		JLabel timerLabel = new JLabel("--:--");
+		timerLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		timerLabel.setFont(new Font("Courier New", Font.ITALIC, 30));
+		timerLabel.setOpaque(true);
+		timerLabel.setBackground(NonogramGame.markerColor1);
 
 		// adding the level's timer label
-		this.add(level.getTimerLabel(), gbc);
+		this.add(timerLabel, gbc);
+		
+		// Timer set up
+		gameTimer = new Timer(1000, new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{ //update time and timer label
+				timeCounter++;
+				timerLabel.setText(getTime());
+			}
+		});
 
 		this.setMinimumSize(new Dimension(FRAME_SIZE, FRAME_SIZE));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -382,6 +403,26 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 	public boolean getFillMode()
 	{
 		return fillMode;
+	}
+	
+	/**
+	 * Get the elapsed time of the level
+	 * @return the current level's time
+	 */
+	public String getTime()
+	{
+		String minutes = timeCounter / 60 > 9 ? "" + timeCounter / 60 : "0" + timeCounter / 60;
+		String seconds = timeCounter % 60 > 9 ? "" + timeCounter % 60 : "0" + timeCounter % 60;
+		return minutes + ":" + seconds;
+	}
+	
+	/**
+	 * Get the game's timer
+	 * @return gameTimer
+	 */
+	public Timer getTimer()
+	{
+		return gameTimer;
 	}
 
 	/**
@@ -513,7 +554,7 @@ public class NonogramGame extends JFrame // NonogramGame is-a JFrame
 	{
 		// edit the data of the current level
 		levelData.set(level.getID(), level.getName() + " - " + completionStatus
-				+ " - " + level.getLevelTime());
+				+ " - " + getTime());
 		// save the data to the file
 		saveDataToFile();
 	}
