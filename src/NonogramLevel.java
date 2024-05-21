@@ -20,7 +20,7 @@ import javax.swing.Timer;
  *         Retrieved from
  *         https://stackoverflow.com/questions/25761438/understanding-bufferedimage-getrgb-output-values
  * 
- *         Version/date: 5-13-24
+ *         Version/date: 5-20-24
  * 
  *         Responsibilities of class:
  *         Represents a level of the game based on the given image name;
@@ -39,9 +39,9 @@ public class NonogramLevel
 	public NonogramLevel(String data, int id)
 	{
 		// constructor receives a level data string and an ID
-		// format of the string is: name - completion
+		// format of the string is: name - completion - --:--
 		
-		name = data.split(" - ")[0];
+		name = data.split(" - ")[0]; // this is the level name
 		levelID = id;
 		
 		try

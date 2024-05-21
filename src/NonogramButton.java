@@ -11,10 +11,11 @@ import javax.swing.JButton;
  *         Retrieved from
  *         https://open.umn.edu/opentextbooks/textbooks/java-java-java-object-oriented-problem-solving
  * 
- *         Version/date: 4-22-24
+ *         Version/date: 5-20-24
  * 
  *         Responsibilities of class:
- *         Represents the boxes that are filled in on the game's grid
+ *         Represents the boxes in the game's grid that the player will interact with
+ *         in order to solve the puzzle.
  */
 public class NonogramButton extends JButton	// NonogramButton is-a JButton
 {

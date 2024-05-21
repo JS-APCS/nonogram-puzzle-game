@@ -16,7 +16,7 @@ import javax.swing.JLabel;
  *         Retrieved from
  *         https://stackoverflow.com/questions/1090098/newline-in-jlabel
  * 
- *         Version/date: 4-29-24
+ *         Version/date: 5-20-24
  * 
  *         Responsibilities of class:
  *         A RowMarker is a modified JLabel that reads from a 2D array of

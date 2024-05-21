@@ -18,13 +18,14 @@ import javax.swing.JOptionPane;
  *         Retrieved from
  *         https://stackoverflow.com/questions/13963392/add-image-to-joptionpane
  * 
- *         Version/date: 5-13-24
+ *         Version/date: 5-20-24
  * 
  *         Responsibilities of class:
  *         A modified ActionListener that listens to the NonogramButton class
  *         and updates the NonogramGame's board of buttons to reflect whether
  *         or not they are filled in or crossed out. It also checks the
- *         player's progress after every move.
+ *         player's progress after every move and will carry out the game
+ *         completion protocol.
  */
 public class NonogramButtonListener implements ActionListener
 {
