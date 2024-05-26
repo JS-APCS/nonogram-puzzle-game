@@ -1,6 +1,5 @@
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -53,7 +52,7 @@ import javax.swing.UIManager;
  *         Retrieved from
  *         https://www.javatpoint.com/java-jprogressbar
  * 
- *         Version/date: 5-20-24
+ *         Version/date: 5-25-24
  * 
  *         Responsibilities of class:
  *         Holds the main functions of the game and displays the game's GUI

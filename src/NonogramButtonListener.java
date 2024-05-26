@@ -2,7 +2,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 /**
@@ -18,7 +17,7 @@ import javax.swing.JOptionPane;
  *         Retrieved from
  *         https://stackoverflow.com/questions/13963392/add-image-to-joptionpane
  * 
- *         Version/date: 5-20-24
+ *         Version/date: 5-25-24
  * 
  *         Responsibilities of class:
  *         A modified ActionListener that listens to the NonogramButton class
